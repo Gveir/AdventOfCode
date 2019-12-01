@@ -12,9 +12,9 @@ namespace AdventOfCode01.Tests
         [InlineData(14, 2)]
         [InlineData(1969, 654)]
         [InlineData(100756, 33583)]
-        public void Calculate(int givenMass, int expectedFuel)
+        public void CalculateModuleFuelRequirement(int givenMass, int expectedFuel)
         {
-            Assert.Equal(expectedFuel, FuelCalculator.CalculateModuleFuelRequirement(givenMass));
+            Assert.Equal(expectedFuel, FuelCalculator.CalculateFuelRequirement(givenMass));
         }
 
         [Fact]
@@ -25,6 +25,25 @@ namespace AdventOfCode01.Tests
                 .Select(x => Convert.ToInt32(x));
 
             Assert.Equal(3313655, FuelCalculator.CalculateSpacecraftFuelRequirement(modulesMasses));
+        }
+
+        [Theory]
+        [InlineData(14, 2)]
+        [InlineData(1969, 966)]
+        [InlineData(100756, 50346)]
+        public void CalculateModuleFuelRequirementIncludingTheFuelMass(int givenMass, int expectedFuel)
+        {
+            Assert.Equal(expectedFuel, FuelCalculator.CalculateModuleFuelRequirementIncludingTheFuelMass(givenMass));
+        }
+
+        [Fact]
+        public void CalculateSpacecraftFuelRequirementsInfIncludingFuelMass()
+        {
+            var modulesMasses = File.ReadAllText("Input.txt")
+                .Split(Environment.NewLine)
+                .Select(x => Convert.ToInt32(x));
+
+            Assert.Equal(4967616, FuelCalculator.CalculateSpacecraftFuelRequirementIncludingFuelMass(modulesMasses));
         }
     }
 }
