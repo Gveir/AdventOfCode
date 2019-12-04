@@ -12,9 +12,38 @@ namespace AdventOfCode03
             var pathPoints1 = GetPathPoints(path1);
             var pathPoints2 = GetPathPoints(path2);
 
-            var commonPoints = pathPoints1.Intersect(pathPoints2, new PointsComparer());
+            var commonPoints = pathPoints1.Intersect(pathPoints2);
 
             return commonPoints.Select(p => Math.Abs(p.X) + Math.Abs(p.Y)).Min();
+        }
+
+        public static int FindFewestCombinedSteps(string path1, string path2)
+        {
+            var pathPoints1 = GetPathPoints(path1);
+            var pathPoints2 = GetPathPoints(path2);
+
+            var commonPoints = pathPoints1.Intersect(pathPoints2);
+
+            List<int> combinedStepsLenghts = new List<int>();
+
+            foreach (var commonPoint in commonPoints)
+            {
+                combinedStepsLenghts.Add(pathPoints1.CalculatePathLenghtToPoint(commonPoint) + pathPoints2.CalculatePathLenghtToPoint(commonPoint));
+            }
+
+            return combinedStepsLenghts.Min();
+        }
+
+        private static int CalculatePathLenghtToPoint(IEnumerable<Point> pathPoints1, Point commonPoint)
+        {
+            int i = 1;
+            foreach (var pathPoint in pathPoints1)
+            {
+                if (pathPoint.Equals(commonPoint)) break;
+                i++;
+            }
+
+            return i;
         }
 
         private static IEnumerable<Point> GetPathPoints(string path)
