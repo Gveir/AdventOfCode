@@ -1,13 +1,19 @@
 ﻿using AdventOfCode02;
-using System;
 using System.IO;
-using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace AgventOfCode02
 {
     public class IntcodeTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public IntcodeTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Theory]
         [InlineData("1,0,0,0,99", "2,0,0,0,99")]
         [InlineData("2,3,0,3,99", "2,3,0,6,99")]
@@ -38,6 +44,36 @@ namespace AgventOfCode02
             intcode.Process();
 
             Assert.Equal(2890696, intcode.Result);
+        }
+
+        [Fact]
+        public void FindingOutput19690720()
+        {
+            string input = File.ReadAllText("Input.txt");
+            long desiredOutput = 19690720;
+
+            for (long noun = 10; noun < 100; noun++)
+            {
+                for (long verb = 10; verb < 100; verb++)
+                {
+                    var intcode = new Intcode(input);
+                    intcode.AdjustMemory(memory =>
+                    {
+                        memory[1] = noun;
+                        memory[2] = verb;
+                    });
+
+                    intcode.Process();
+
+                    if (intcode.Result == desiredOutput)
+                    {
+                        _output.WriteLine($"Found noun: {noun} and verb: {verb}; The result is {100 * noun + verb}");
+                        return;
+                    }
+                }
+            }
+
+            Assert.True(false, "Failed to find noun and verb for desired output :(");
         }
     }
 }
