@@ -15,17 +15,29 @@ namespace AgventOfCode02
         [InlineData("1,1,1,4,99,5,6,0,99", "30,1,1,4,2,5,6,0,99")]
         public void Calculate(string input, string expectedOutput)
         {
-            Assert.Equal(expectedOutput, Intcode.Calculate(input));
+            var intcode = new Intcode(input);
+            
+            intcode.Process();
+            
+            Assert.Equal(expectedOutput, intcode.GetMemoryDump());
         }
 
         [Fact]
         public void ProgramAlarm()
         {
-            var input = File.ReadAllText("Input.txt").Split(',').Select(i => Convert.ToInt64(i)).ToArray();
-            input[1] = 12;
-            input[2] = 2;
+            const int noun = 12;
+            const int verb = 2;
 
-            Assert.StartsWith("2890696,", Intcode.Calculate(string.Join(',', input)));
+            var intcode = new Intcode(File.ReadAllText("Input.txt"));
+            intcode.AdjustMemory(memory =>
+            {
+                memory[1] = noun;
+                memory[2] = verb;
+            });
+
+            intcode.Process();
+
+            Assert.Equal(2890696, intcode.Result);
         }
     }
 }

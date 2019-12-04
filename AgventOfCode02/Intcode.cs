@@ -7,34 +7,54 @@ namespace AdventOfCode02
     {
         private const int FinishOpcode = 99;
 
-        public static string Calculate(string input)
-        {
-            var inputs = input.Split(',').Select(i => Convert.ToInt64(i)).ToArray();
+        private long[] _memory;
 
+        public long Result => _memory[0];
+
+        public Intcode(string memoryDump)
+        {
+            LoadMemory(memoryDump);
+        }
+
+        public void LoadMemory(string memoryDump)
+        {
+            _memory = memoryDump.Split(',').Select(i => Convert.ToInt64(i)).ToArray();
+        }
+
+        public void AdjustMemory(Action<long[]> adjuster)
+        {
+            adjuster(_memory);
+        }
+
+        public string GetMemoryDump() => string.Join(',', _memory);
+
+        public void Process()
+        {
             int index = 0;
 
-            while (inputs[index] != FinishOpcode)
+            while (_memory[index] != FinishOpcode)
             {
-                var opcode = inputs[index];
+                var opcode = _memory[index];
+                var operand1 = _memory[_memory[index + 1]];
+                var operand2 = _memory[_memory[index + 2]];
+                var outputStoreIndex = _memory[index + 3];
                 long result;
                 switch (opcode)
                 {
                     case 1:
-                        result = inputs[inputs[index + 1]] + inputs[inputs[index + 2]];
+                        result = operand1 + operand2;
                         break;
                     case 2:
-                        result = inputs[inputs[index + 1]] * inputs[inputs[index + 2]];
+                        result = operand1 * operand2;
                         break;
                     default:
                         throw new InvalidOperationException($"Unrecognized operation opcode: {opcode}");
                 }
 
-                inputs[inputs[index + 3]] = result;
+                _memory[outputStoreIndex] = result;
 
                 index += 4;
             }
-
-            return string.Join(',', inputs);
         }
     }
 }
