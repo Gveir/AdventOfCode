@@ -7,8 +7,9 @@ namespace AdventOfCode04
     {
         public static bool Validate(string password)
         {
-            var hasDuplicatedChar = password.Length != password.Distinct().Count();
             var isAscending = password == string.Concat(password.OrderBy(ch => ch));
+
+            var hasDuplicatedChar = password.GroupBy(ch => ch).Select(g => g.Count()).Any(count => count == 2);
 
             return isAscending && hasDuplicatedChar;
         }

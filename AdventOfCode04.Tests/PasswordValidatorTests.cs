@@ -6,11 +6,14 @@ namespace AdventOfCode04.Tests
     {
         [Theory]
         [InlineData("122345", true)]
-        [InlineData("111123", true)]
+        [InlineData("111123", false)]
         [InlineData("135679", false)]
-        [InlineData("111111", true)]
+        [InlineData("111111", false)]
         [InlineData("223450", false)]
         [InlineData("123789", false)]
+        [InlineData("112233", true)]
+        [InlineData("123444", false)]
+        [InlineData("111122", true)]
         public void Validate(string password, bool expectedOutput)
         {
             Assert.Equal(expectedOutput, PasswordValidator.Validate(password));
@@ -32,7 +35,7 @@ namespace AdventOfCode04.Tests
                 }
             }
 
-            Assert.Equal(1625, count);
+            Assert.Equal(1111, count);
         }
     }
 }
