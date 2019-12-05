@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AgventOfCode02\AdventOfCode02.csproj" />
+    <ProjectReference Include="..\AdventOfCode02\AdventOfCode02.csproj" />
   </ItemGroup>
 
   <ItemGroup>

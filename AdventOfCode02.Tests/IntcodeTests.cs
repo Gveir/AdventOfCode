@@ -1,9 +1,8 @@
-﻿using AdventOfCode02;
-using System.IO;
+﻿using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AgventOfCode02
+namespace AdventOfCode02.Tests
 {
     public class IntcodeTests
     {
