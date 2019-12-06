@@ -18,9 +18,9 @@ namespace AdventOfCode02.Tests
         [InlineData("2,3,0,3,99", "2,3,0,6,99")]
         [InlineData("2,4,4,5,99,0", "2,4,4,5,99,9801")]
         [InlineData("1,1,1,4,99,5,6,0,99", "30,1,1,4,2,5,6,0,99")]
-        public void Calculate(string input, string expectedOutput)
+        public void Calculate(string program, string expectedOutput)
         {
-            var intcode = new Intcode(input);
+            var intcode = new Intcode(program);
             
             intcode.Process();
             
@@ -48,14 +48,14 @@ namespace AdventOfCode02.Tests
         [Fact]
         public void FindingOutput19690720()
         {
-            string input = File.ReadAllText("Input.txt");
+            string program = File.ReadAllText("Input.txt");
             long desiredOutput = 19690720;
 
             for (long noun = 10; noun < 100; noun++)
             {
                 for (long verb = 10; verb < 100; verb++)
                 {
-                    var intcode = new Intcode(input);
+                    var intcode = new Intcode(program);
                     intcode.AdjustMemory(memory =>
                     {
                         memory[1] = noun;
