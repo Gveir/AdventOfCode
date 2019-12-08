@@ -2,16 +2,17 @@
 {
     internal class Output : IOperation
     {
-        private readonly StoreIndex _index;
+        private readonly Parameter _index;
 
-        public Output(StoreIndex index)
+        public Output(Parameter index)
         {
             _index = index;
         }
 
         public void Apply(IProcessor processor)
         {
-            processor.Output = processor.ReadMemory(_index);
+            processor.Output = _index.RetrieveValue(processor);
+            processor.MoveIndex(2);
         }
     }
 }

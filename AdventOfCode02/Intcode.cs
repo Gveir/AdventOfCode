@@ -7,6 +7,7 @@ namespace AdventOfCode02
     public class Intcode : IProcessor
     {
         private long[] _memory;
+        private long _index = 0;
 
         public long Result => _memory[0];
         public long Input { get; private set; }
@@ -23,10 +24,15 @@ namespace AdventOfCode02
         }
 
         public long ReadMemory(long index) => _memory[index];
+        public long ReadMemory(int offset) => _memory[_index + offset];
         public long ReadMemory(IParameter index) => ReadMemory(index.RetrieveValue(this));
 
         public void WriteMemory(long index, long value) => _memory[index] = value;
         public void WriteMemory(IParameter index, long value) => WriteMemory(index.RetrieveValue(this), value);
+
+        public long ReadIndex() => _index;
+        public void MoveIndex(int offset) => _index += offset;
+        public void SetIndex(long index) => _index = index;
 
         public void Process()
         {

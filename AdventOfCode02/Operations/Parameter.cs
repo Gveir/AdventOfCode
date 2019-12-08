@@ -23,7 +23,7 @@ namespace AdventOfCode02.Operations
             _mode = mode;
         }
 
-        public long RetrieveValue(IProcessor processor)
+        public long RetrieveValue(IReadOnlyProcessor processor)
         {
             switch (_mode)
             {

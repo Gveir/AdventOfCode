@@ -9,8 +9,13 @@ namespace AdventOfCode02.Operations
         MULTIPLICATION = 2,
         INPUT = 3,
         OUTPUT = 4,
+        JUMP_IF_TRUE = 5,
+        JUMP_IF_FALSE = 6,
+        LESS_THAN = 7,
+        EQUALS = 8,
         FINISH = 99,
     }
+
     internal static class OperationsFactory
     {
         private class ParamModes
@@ -39,45 +44,65 @@ namespace AdventOfCode02.Operations
             }
         }
 
-        public static IEnumerable<IOperation> CreateOperationsStream(IProcessor processor)
+        public static IEnumerable<IOperation> CreateOperationsStream(IReadOnlyProcessor processor)
         {
-            int index = 0;
-
             while (true)
             {
-                var opcodeFull = processor.ReadMemory(index);
+                var opcodeFull = processor.ReadMemory(0);
                 var opcode = (Opcode)(opcodeFull % 100);
                 var paramModes = new ParamModes(opcodeFull);
-                
+
                 switch (opcode)
                 {
                     case Opcode.ADDITION:
                         yield return new Addition(
-                            new Parameter(processor.ReadMemory(index + 1), paramModes.GetNext()),
-                            new Parameter(processor.ReadMemory(index + 2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(index + 3))
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
+                            new StoreIndex(processor.ReadMemory(3))
                         );
-                        index += 4;
                         break;
                     case Opcode.MULTIPLICATION:
                         yield return new Multiplication(
-                            new Parameter(processor.ReadMemory(index + 1), paramModes.GetNext()),
-                            new Parameter(processor.ReadMemory(index + 2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(index + 3))
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
+                            new StoreIndex(processor.ReadMemory(3))
                         );
-                        index += 4;
                         break;
                     case Opcode.INPUT:
                         yield return new Input(
-                            new StoreIndex(processor.ReadMemory(index + 1))
+                            new StoreIndex(processor.ReadMemory(1))
                         );
-                        index += 2;
                         break;
                     case Opcode.OUTPUT:
                         yield return new Output(
-                            new StoreIndex(processor.ReadMemory(index + 1))
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext())
                         );
-                        index += 2;
+                        break;
+                    case Opcode.JUMP_IF_TRUE:
+                        yield return new JumpIfTrue(
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext())
+                        );
+                        break;
+                    case Opcode.JUMP_IF_FALSE:
+                        yield return new JumpIfFalse(
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext())
+                        );
+                        break;
+                    case Opcode.LESS_THAN:
+                        yield return new LessThan(
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
+                            new StoreIndex(processor.ReadMemory(3))
+                        );
+                        break;
+                    case Opcode.EQUALS:
+                        yield return new Equals(
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
+                            new StoreIndex(processor.ReadMemory(3))
+                        );
                         break;
                     case Opcode.FINISH:
                         yield break;

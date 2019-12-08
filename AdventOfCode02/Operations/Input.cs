@@ -12,6 +12,7 @@
         public void Apply(IProcessor processor)
         {
             processor.WriteMemory(_storeIndex, processor.Input);
+            processor.MoveIndex(2);
         }
     }
 }

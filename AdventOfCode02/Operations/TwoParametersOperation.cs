@@ -19,6 +19,7 @@
                 _storeIndex,
                 PerformOperation(_operand1.RetrieveValue(processor), _operand2.RetrieveValue(processor))
             );
+            processor.MoveIndex(4);
         }
 
         protected abstract long PerformOperation(long operand1Value, long operand2Value);

@@ -2,6 +2,6 @@
 {
     public interface IParameter
     {
-        long RetrieveValue(IProcessor processor);
+        long RetrieveValue(IReadOnlyProcessor processor);
     }
 }
