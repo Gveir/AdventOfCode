@@ -13,28 +13,56 @@ namespace AdventOfCode02.Operations
     }
     internal static class OperationsFactory
     {
+        private class ParamModes
+        {
+            private readonly IEnumerator<ParameterMode> _modesEnumerator;
+
+            public ParamModes(long opcodeFull)
+            {
+                _modesEnumerator = GetParameterModes(opcodeFull).GetEnumerator();
+            }
+
+            private IEnumerable<ParameterMode> GetParameterModes(long opcodeFull)
+            {
+                var paramModes = opcodeFull / 100;
+
+                while (true)
+                {
+                    yield return (ParameterMode)(paramModes % 10);
+                    paramModes /= 10;
+                }
+            }
+
+            public ParameterMode GetNext()
+            {
+                return _modesEnumerator.MoveNext() ? _modesEnumerator.Current : ParameterMode.Immediate;
+            }
+        }
+
         public static IEnumerable<IOperation> CreateOperationsStream(IProcessor processor)
         {
             int index = 0;
 
             while (true)
             {
-                var opcode = (Opcode)processor.ReadMemory(index);
+                var opcodeFull = processor.ReadMemory(index);
+                var opcode = (Opcode)(opcodeFull % 100);
+                var paramModes = new ParamModes(opcodeFull);
                 
                 switch (opcode)
                 {
                     case Opcode.ADDITION:
                         yield return new Addition(
-                            new Parameter(processor.ReadMemory(index + 1)),
-                            new Parameter(processor.ReadMemory(index + 2)),
+                            new Parameter(processor.ReadMemory(index + 1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(index + 2), paramModes.GetNext()),
                             new StoreIndex(processor.ReadMemory(index + 3))
                         );
                         index += 4;
                         break;
                     case Opcode.MULTIPLICATION:
                         yield return new Multiplication(
-                            new Parameter(processor.ReadMemory(index + 1)),
-                            new Parameter(processor.ReadMemory(index + 2)),
+                            new Parameter(processor.ReadMemory(index + 1), paramModes.GetNext()),
+                            new Parameter(processor.ReadMemory(index + 2), paramModes.GetNext()),
                             new StoreIndex(processor.ReadMemory(index + 3))
                         );
                         index += 4;
@@ -58,5 +86,7 @@ namespace AdventOfCode02.Operations
                 }
             }
         }
+
+        
     }
 }
