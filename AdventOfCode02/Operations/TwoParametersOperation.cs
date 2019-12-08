@@ -4,18 +4,21 @@
     {
         private readonly Parameter _operand1;
         private readonly Parameter _operand2;
-        private readonly Parameter _outputStoreIndex;
+        private readonly StoreIndex _storeIndex;
 
-        public TwoParametersOperation(Parameter operand1, Parameter operand2, Parameter outputStoreIndex)
+        public TwoParametersOperation(Parameter operand1, Parameter operand2, StoreIndex storeIndex)
         {
             _operand1 = operand1;
             _operand2 = operand2;
-            _outputStoreIndex = outputStoreIndex;
+            _storeIndex = storeIndex;
         }
 
-        public void Apply(long[] memory)
+        public void Apply(IProcessor processor)
         {
-            memory[_outputStoreIndex.RetrieveValue(memory)] = PerformOperation(_operand1.RetrieveValue(memory), _operand2.RetrieveValue(memory));
+            processor.WriteMemory(
+                _storeIndex,
+                PerformOperation(_operand1.RetrieveValue(processor), _operand2.RetrieveValue(processor))
+            );
         }
 
         protected abstract long PerformOperation(long operand1Value, long operand2Value);

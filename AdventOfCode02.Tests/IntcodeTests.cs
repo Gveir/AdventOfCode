@@ -34,12 +34,9 @@ namespace AdventOfCode02.Tests
             const int verb = 2;
 
             var intcode = new Intcode(File.ReadAllText("Input.txt"));
-            intcode.AdjustMemory(memory =>
-            {
-                memory[1] = noun;
-                memory[2] = verb;
-            });
-
+            intcode.WriteMemory(1, noun);
+            intcode.WriteMemory(2, verb);
+           
             intcode.Process();
 
             Assert.Equal(2890696, intcode.Result);
@@ -56,11 +53,8 @@ namespace AdventOfCode02.Tests
                 for (long verb = 10; verb < 100; verb++)
                 {
                     var intcode = new Intcode(program);
-                    intcode.AdjustMemory(memory =>
-                    {
-                        memory[1] = noun;
-                        memory[2] = verb;
-                    });
+                    intcode.WriteMemory(1, noun);
+                    intcode.WriteMemory(2, verb);
 
                     intcode.Process();
 

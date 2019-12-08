@@ -8,7 +8,7 @@ namespace AdventOfCode02.Operations
         Immediate = 1
     }
 
-    internal class Parameter
+    internal class Parameter : IParameter
     {
         private long _value;
         private ParameterMode _mode;
@@ -23,12 +23,12 @@ namespace AdventOfCode02.Operations
             _mode = mode;
         }
 
-        public long RetrieveValue(long[] memory)
+        public long RetrieveValue(IProcessor processor)
         {
             switch (_mode)
             {
                 case ParameterMode.Position:
-                    return memory[_value];
+                    return processor.ReadMemory(_value);
                 case ParameterMode.Immediate:
                     return _value;
                 default:
