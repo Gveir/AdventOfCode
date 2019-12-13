@@ -20,6 +20,25 @@ namespace AdventOfCode06
             return _map.Sum(CalculateDistanceToCentreOfMass);
         }
 
+        public int CountOrbitalTransfers(string from, string to)
+        {
+            var fromToCoMPath = DeterminePathToCentreOfMass(from).ToArray();
+            var toToCoMPath = DeterminePathToCentreOfMass(to).ToArray();
+
+            return fromToCoMPath.Except(toToCoMPath).Count() + toToCoMPath.Except(fromToCoMPath).Count();
+        }
+
+        private IEnumerable<string> DeterminePathToCentreOfMass(string from)
+        {
+            var orbit = _map.Single(o => o.Key == from);
+
+            while (orbit.Value != "COM")
+            {
+                yield return orbit.Value;
+                orbit = _map.Single(o => o.Key == orbit.Value);
+            }
+        }
+
         private int CalculateDistanceToCentreOfMass(KeyValuePair<string, string> orbit)
         {
             int distance;
