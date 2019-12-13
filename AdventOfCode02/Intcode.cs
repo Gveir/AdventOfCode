@@ -1,5 +1,6 @@
 ﻿using AdventOfCode02.Operations;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode02
@@ -8,19 +9,24 @@ namespace AdventOfCode02
     {
         private long[] _memory;
         private long _index = 0;
+        private readonly IEnumerator<long> _inputsEnumerator;
 
         public long Result => _memory[0];
-        public long Input { get; private set; }
+        public long Input => GetNextInput();
         public long Output { get; set; }
 
         public Intcode(string program) : this(program, 0)
         {
         }
 
-        public Intcode(string program, long input)
+        public Intcode(string program, long input) : this(program, new List<long> { input })
+        {
+        }
+
+        public Intcode(string program, IEnumerable<long> inputs)
         {
             LoadProgram(program);
-            Input = input;
+            _inputsEnumerator = inputs.GetEnumerator();
         }
 
         public long ReadMemory(long index) => _memory[index];
@@ -33,6 +39,16 @@ namespace AdventOfCode02
         public long ReadIndex() => _index;
         public void MoveIndex(int offset) => _index += offset;
         public void SetIndex(long index) => _index = index;
+
+        public long GetNextInput()
+        {
+            if (_inputsEnumerator.MoveNext())
+            {
+                return _inputsEnumerator.Current;
+            }
+
+            throw new InvalidOperationException("No more inputs provided. Ensure your program is correct.");
+        }
 
         public void Process()
         {
