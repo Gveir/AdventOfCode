@@ -77,7 +77,7 @@ namespace AdventOfCode02.Operations
                         yield return new Output(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext())
                         );
-                        break;
+                        yield break;
                     case Opcode.JUMP_IF_TRUE:
                         yield return new JumpIfTrue(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
@@ -105,6 +105,7 @@ namespace AdventOfCode02.Operations
                         );
                         break;
                     case Opcode.FINISH:
+                        yield return new Finish();
                         yield break;
                     default:
                         throw new InvalidOperationException($"Unrecognized operation opcode: {opcode}");

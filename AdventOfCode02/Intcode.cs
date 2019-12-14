@@ -9,13 +9,14 @@ namespace AdventOfCode02
     {
         private long[] _memory;
         private long _index = 0;
-        private readonly IEnumerator<long> _inputsEnumerator;
+        private readonly Queue<long> _inputs;
 
         public long Result => _memory[0];
         public long Input => GetNextInput();
         public long Output { get; set; }
+        public bool IsFinished { get; set; }
 
-        public Intcode(string program) : this(program, 0)
+        public Intcode(string program) : this(program, new List<long>())
         {
         }
 
@@ -26,7 +27,7 @@ namespace AdventOfCode02
         public Intcode(string program, IEnumerable<long> inputs)
         {
             LoadProgram(program);
-            _inputsEnumerator = inputs.GetEnumerator();
+            _inputs = new Queue<long>(inputs);
         }
 
         public long ReadMemory(long index) => _memory[index];
@@ -42,12 +43,17 @@ namespace AdventOfCode02
 
         public long GetNextInput()
         {
-            if (_inputsEnumerator.MoveNext())
+            if (_inputs.TryDequeue(out long result))
             {
-                return _inputsEnumerator.Current;
+                return result;
             }
 
             throw new InvalidOperationException("No more inputs provided. Ensure your program is correct.");
+        }
+
+        public void EnqueueInput(long input)
+        {
+            _inputs.Enqueue(input);
         }
 
         public void Process()

@@ -31,15 +31,17 @@ namespace AdventOfCode07
 
         private long CalculateSignal(IEnumerable<int> phaseSettingSequence)
         {
+            List<Intcode> amplifiers = phaseSettingSequence.Select(phaseSetting => new Intcode(_program, phaseSetting)).ToList();
+
             long input = 0;
 
-            foreach (var phaseSetting in phaseSettingSequence)
+            foreach (var amplifier in amplifiers)
             {
-                var processor = new Intcode(_program, new List<long> { phaseSetting, input });
+                amplifier.EnqueueInput(input);
 
-                processor.Process();
+                amplifier.Process();
 
-                input = processor.Output;
+                input = amplifier.Output;
             }
 
             return input;

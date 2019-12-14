@@ -12,6 +12,7 @@
     public interface IProcessor : IReadOnlyProcessor
     {
         long Output { get; set; }
+        bool IsFinished { get; set; }
         void WriteMemory(IParameter index, long value);
         void MoveIndex(int offset);
         void SetIndex(long index);

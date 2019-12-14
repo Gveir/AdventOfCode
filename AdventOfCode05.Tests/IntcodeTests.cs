@@ -45,7 +45,10 @@ namespace AdventOfCode05.Tests
         {
             var intcode = new Intcode(File.ReadAllText("Program.txt"), input);
 
-            intcode.Process();
+            while (!intcode.IsFinished)
+            {
+                intcode.Process();
+            }
 
             Assert.Equal(expectedOutput, intcode.Output);
         }
