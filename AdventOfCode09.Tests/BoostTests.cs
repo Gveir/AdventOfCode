@@ -30,5 +30,21 @@ namespace AdventOfCode09.Tests
 
             Assert.Equal(3512778005, intcode.Output);
         }
+
+        [Fact]
+        public void CoordinatesOfTheDistressSignalTest()
+        {
+            var program = File.ReadAllText("Program.txt");
+
+            var intcode = new Intcode(program, 2);
+
+            while (!intcode.IsFinished)
+            {
+                intcode.Process();
+                _output.WriteLine(intcode.Output.ToString());
+            }
+
+            Assert.Equal(35920, intcode.Output);
+        }
     }
 }
