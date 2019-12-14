@@ -12,13 +12,13 @@
         }
         public void Apply(IProcessor processor)
         {
-            if (_operand1.RetrieveValue(processor) == 0)
+            if (processor.ReadMemory(_operand1) == 0)
             {
-                processor.SetIndex(_operand2.RetrieveValue(processor));
+                processor.SetOpPointer(processor.ReadMemory(_operand2));
             }
             else
             {
-                processor.MoveIndex(3);
+                processor.AdjustOpPointer(3);
             }
         }
     }

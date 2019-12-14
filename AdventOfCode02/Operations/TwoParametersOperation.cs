@@ -4,9 +4,9 @@
     {
         private readonly Parameter _operand1;
         private readonly Parameter _operand2;
-        private readonly StoreIndex _storeIndex;
+        private readonly Parameter _storeIndex;
 
-        public TwoParametersOperation(Parameter operand1, Parameter operand2, StoreIndex storeIndex)
+        public TwoParametersOperation(Parameter operand1, Parameter operand2, Parameter storeIndex)
         {
             _operand1 = operand1;
             _operand2 = operand2;
@@ -17,9 +17,9 @@
         {
             processor.WriteMemory(
                 _storeIndex,
-                PerformOperation(_operand1.RetrieveValue(processor), _operand2.RetrieveValue(processor))
+                PerformOperation(processor.ReadMemory(_operand1), processor.ReadMemory(_operand2))
             );
-            processor.MoveIndex(4);
+            processor.AdjustOpPointer(4);
         }
 
         protected abstract long PerformOperation(long operand1Value, long operand2Value);

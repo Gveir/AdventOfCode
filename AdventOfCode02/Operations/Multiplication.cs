@@ -2,7 +2,7 @@
 {
     internal class Multiplication : TwoParametersOperation
     {
-        public Multiplication(Parameter operand1, Parameter operand2, StoreIndex outputStoreIndex) : base(operand1, operand2, outputStoreIndex)
+        public Multiplication(Parameter operand1, Parameter operand2, Parameter outputStoreIndex) : base(operand1, operand2, outputStoreIndex)
         {
         }
 

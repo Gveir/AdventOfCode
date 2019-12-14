@@ -24,7 +24,7 @@ namespace AdventOfCode02.Tests
             
             intcode.Process();
             
-            Assert.Equal(expectedOutput, intcode.GetMemoryDump());
+            Assert.StartsWith(expectedOutput, intcode.GetMemoryDump());
         }
 
         [Fact]

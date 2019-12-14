@@ -24,7 +24,7 @@ namespace AdventOfCode05.Tests
             intcode.Process();
 
             Assert.Equal(1002, intcode.Result); 
-            Assert.Equal(99, intcode.ReadMemory(4L));
+            Assert.Equal(99, intcode.ReadMemory(0));
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace AdventOfCode05.Tests
             intcode.Process();
 
             Assert.Equal(1101, intcode.Result);
-            Assert.Equal(99, intcode.ReadMemory(4L));
+            Assert.Equal(99, intcode.ReadMemory(0));
         }
 
         [Theory]

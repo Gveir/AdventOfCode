@@ -8,7 +8,8 @@ namespace AdventOfCode02
     public class Intcode : IProcessor
     {
         private long[] _memory;
-        private long _index = 0;
+        private long _opPointer = 0;
+        private long _relativeBase = 0;
         private readonly Queue<long> _inputs;
 
         public long Result => _memory[0];
@@ -30,16 +31,46 @@ namespace AdventOfCode02
             _inputs = new Queue<long>(inputs);
         }
 
-        public long ReadMemory(long index) => _memory[index];
-        public long ReadMemory(int offset) => _memory[_index + offset];
-        public long ReadMemory(IParameter index) => ReadMemory(index.RetrieveValue(this));
+        public long ReadMemory(int offset) => _memory[_opPointer + offset];
+
+        public long ReadMemory(IParameter index)
+        {
+            switch (index.Mode)
+            {
+                case ParameterMode.Position:
+                    return _memory[index.Value];
+                case ParameterMode.Immediate:
+                    return index.Value;
+                case ParameterMode.Relative:
+                    return _memory[index.Value + _relativeBase];
+                default:
+                    throw new InvalidOperationException($"Unknow parameter mode: {index.Mode}");
+            }
+        }
 
         public void WriteMemory(long index, long value) => _memory[index] = value;
-        public void WriteMemory(IParameter index, long value) => WriteMemory(index.RetrieveValue(this), value);
+        public void WriteMemory(IParameter index, long value)
+        {
+            switch (index.Mode)
+            {
+                case ParameterMode.Position:
+                    WriteMemory(index.Value, value);
+                    break;
+                case ParameterMode.Relative:
+                    WriteMemory(index.Value + _relativeBase, value);
+                    break;
+                case ParameterMode.Immediate:
+                    throw new InvalidOperationException("Can not write to the memory using a parameter in Immediate mode.");
+                default:
+                    throw new InvalidOperationException($"Unknow parameter mode: {index.Mode}");
+            }
+            
+        }
 
-        public long ReadIndex() => _index;
-        public void MoveIndex(int offset) => _index += offset;
-        public void SetIndex(long index) => _index = index;
+        public void AdjustOpPointer(int offset) => _opPointer += offset;
+        public void SetOpPointer(long opPointer) => _opPointer = opPointer;
+
+        public void AdjustRelativeBase(long offset) => _relativeBase += offset;
 
         public long GetNextInput()
         {
@@ -70,7 +101,9 @@ namespace AdventOfCode02
 
         private void LoadProgram(string program)
         {
-            _memory = program.Split(',').Select(i => Convert.ToInt64(i)).ToArray();
+            var tempMemory = program.Split(',').Select(i => Convert.ToInt64(i)).ToArray();
+            _memory = new long[tempMemory.Length * 20]; //arbitrarily chosen memory size to alocate as the requirements are vague 
+            Array.Copy(tempMemory, 0, _memory, 0, tempMemory.Length);
         }
     }
 }

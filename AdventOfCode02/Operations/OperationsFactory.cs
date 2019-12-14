@@ -13,6 +13,7 @@ namespace AdventOfCode02.Operations
         JUMP_IF_FALSE = 6,
         LESS_THAN = 7,
         EQUALS = 8,
+        RELATIVE_BASE_OFFSET = 9,
         FINISH = 99,
     }
 
@@ -40,7 +41,7 @@ namespace AdventOfCode02.Operations
 
             public ParameterMode GetNext()
             {
-                return _modesEnumerator.MoveNext() ? _modesEnumerator.Current : ParameterMode.Immediate;
+                return _modesEnumerator.MoveNext() ? _modesEnumerator.Current : ParameterMode.Position;
             }
         }
 
@@ -58,19 +59,19 @@ namespace AdventOfCode02.Operations
                         yield return new Addition(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
                             new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(3))
+                            new Parameter(processor.ReadMemory(3), paramModes.GetNext())
                         );
                         break;
                     case Opcode.MULTIPLICATION:
                         yield return new Multiplication(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
                             new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(3))
+                            new Parameter(processor.ReadMemory(3), paramModes.GetNext())
                         );
                         break;
                     case Opcode.INPUT:
                         yield return new Input(
-                            new StoreIndex(processor.ReadMemory(1))
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext())
                         );
                         break;
                     case Opcode.OUTPUT:
@@ -94,14 +95,19 @@ namespace AdventOfCode02.Operations
                         yield return new LessThan(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
                             new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(3))
+                            new Parameter(processor.ReadMemory(3), paramModes.GetNext())
                         );
                         break;
                     case Opcode.EQUALS:
                         yield return new Equals(
                             new Parameter(processor.ReadMemory(1), paramModes.GetNext()),
                             new Parameter(processor.ReadMemory(2), paramModes.GetNext()),
-                            new StoreIndex(processor.ReadMemory(3))
+                            new Parameter(processor.ReadMemory(3), paramModes.GetNext())
+                        );
+                        break;
+                    case Opcode.RELATIVE_BASE_OFFSET:
+                        yield return new RelativeBaseOffset(
+                            new Parameter(processor.ReadMemory(1), paramModes.GetNext())    
                         );
                         break;
                     case Opcode.FINISH:

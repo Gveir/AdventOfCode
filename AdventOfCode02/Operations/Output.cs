@@ -11,8 +11,8 @@
 
         public void Apply(IProcessor processor)
         {
-            processor.Output = _index.RetrieveValue(processor);
-            processor.MoveIndex(2);
+            processor.Output = processor.ReadMemory(_index);
+            processor.AdjustOpPointer(2);
         }
     }
 }

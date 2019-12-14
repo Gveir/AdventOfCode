@@ -4,9 +4,9 @@
     {
         private readonly Parameter _operand1;
         private readonly Parameter _operand2;
-        private readonly StoreIndex _storeIndex;
+        private readonly Parameter _storeIndex;
 
-        public LessThan(Parameter operand1, Parameter operand2, StoreIndex storeIndex)
+        public LessThan(Parameter operand1, Parameter operand2, Parameter storeIndex)
         {
             _operand1 = operand1;
             _operand2 = operand2;
@@ -14,8 +14,8 @@
         }
         public void Apply(IProcessor processor)
         {
-            processor.WriteMemory(_storeIndex, _operand1.RetrieveValue(processor) < _operand2.RetrieveValue(processor) ? 1 : 0);
-            processor.MoveIndex(4);
+            processor.WriteMemory(_storeIndex, processor.ReadMemory(_operand1) < processor.ReadMemory(_operand2) ? 1 : 0);
+            processor.AdjustOpPointer(4);
         }
     }
 }

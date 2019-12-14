@@ -2,7 +2,7 @@
 {
     internal class Addition : TwoParametersOperation
     {
-        public Addition(Parameter operand1, Parameter operand2, StoreIndex outputStoreIndex) : base(operand1, operand2, outputStoreIndex)
+        public Addition(Parameter operand1, Parameter operand2, Parameter outputStoreIndex) : base(operand1, operand2, outputStoreIndex)
         {
         }
 
