@@ -13,11 +13,11 @@ namespace AdventOfCode10.Tests
         [InlineData("Input.txt", 299)]
         public void FindBestAsteroid(string exampleFileName, int expectedLargestNumberOfOtherAsteroids)
         {
-            var map = File.ReadAllText(exampleFileName);
+            var map = MapReader.FindAllAsteroids(File.ReadAllText(exampleFileName));
 
-            int largestNumberOfOtherAsteroids = BestPlaceDetector.Determine(map);
+            BestPlace bestPlace = BestPlaceDetector.Determine(map);
 
-            Assert.Equal(expectedLargestNumberOfOtherAsteroids, largestNumberOfOtherAsteroids);
+            Assert.Equal(expectedLargestNumberOfOtherAsteroids, bestPlace.DetectionRatio);
         }
     }
 }

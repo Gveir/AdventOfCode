@@ -1,33 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 namespace AdventOfCode10
 {
-    internal class Asteroid
-    {
-        public int X { get; private set; }
-        public int Y { get; private set; }
-
-        public Asteroid(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public override string ToString()
-        {
-            return $"X:{X}/Y:{Y}";
-        }
-    }
-
     public class BestPlaceDetector
     {
-        public static int Determine(string map)
+        public static BestPlace Determine(IEnumerable<Asteroid> asteroids)
         {
-            var asteroids = FindAllAsteroids(map).ToList();
-
-            int maxCount = 0;
+            BestPlace bestPlace = null;
 
             foreach (var asteroid in asteroids)
             {
@@ -41,42 +21,25 @@ namespace AdventOfCode10
 
                 var count = quadrants.Sum(quadrrantAsteroids => CalculateDetectableAsteroidsCount(asteroid, quadrrantAsteroids));
 
-                maxCount = count > maxCount ? count : maxCount;
+                if (bestPlace == null || bestPlace.DetectionRatio < count)
+                {
+                    bestPlace = new BestPlace(asteroid, count);
+                }
             }
 
-            return maxCount;
+            return bestPlace;
         }
 
         private static int CalculateDetectableAsteroidsCount(Asteroid asteroid, IEnumerable<Asteroid> asteroids)
         {
-            HashSet<int> linesOfSight = new HashSet<int>();
+            HashSet<float> linesOfSight = new HashSet<float>();
 
             foreach (var a in asteroids.Where(a => a.X != asteroid.X || a.Y != asteroid.Y))
             {
-                int dx = asteroid.X - a.X;
-                int dy = (asteroid.Y - a.Y) * 1000000;
-                var c = dx != 0 ? dy / dx : int.MaxValue;
-
-                linesOfSight.Add(c);
+                linesOfSight.Add(asteroid.CalculateSlope(a));
             }
 
             return linesOfSight.Count;
-        }
-
-        private static IEnumerable<Asteroid> FindAllAsteroids(string map)
-        {
-            var lines = map.Split(Environment.NewLine);
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                for (int j = 0; j < lines[i].Length; j++)
-                {
-                    if (lines[i][j] == '#')
-                    {
-                        yield return new Asteroid(j, i);
-                    }
-                }
-            }
         }
     }
 }
