@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AdventOfCode11
 {
-    internal class Position
+    public class Position
     {
         public static Position Start = new Position(0, 0);
 
@@ -45,5 +45,7 @@ namespace AdventOfCode11
         }
 
         public Position Next(Direction direction) => nextPositonMap[direction](this);
+
+        public static explicit operator Position((int, int) t) => new Position(t.Item1, t.Item2);
     }
 }

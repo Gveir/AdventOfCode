@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode11
 {
-    internal enum Direction
+    public enum Direction
     {
         Up = 0,
         Left = 1,

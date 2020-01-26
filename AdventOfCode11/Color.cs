@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode11
 {
-    internal enum Color
+    public enum Color
     {
         Black = 0,
         White = 1

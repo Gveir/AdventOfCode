@@ -10,12 +10,13 @@ namespace AdventOfCode11
         private Direction _direction = Direction.Up;
         private Dictionary<Position, Color> _paintedPanels = new Dictionary<Position, Color>();
 
-        public int PaintendPanelsCount => _paintedPanels.Count;
+        public IReadOnlyDictionary<Position, Color> PaintedPanels => _paintedPanels;
 
-        public EmergencyHullPaintingRobot(string program)
+        public EmergencyHullPaintingRobot(string program, Color startingColor)
         {
             _processor = new Intcode(program);
             _position = Position.Start;
+            _paintedPanels.Add(_position, startingColor);
         }
 
         public void PaintHull()
