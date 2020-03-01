@@ -8,10 +8,17 @@ namespace AdventOfCode13
     {
         private readonly Intcode _processor;
         private readonly Dictionary<(long X, long Y), Tile> _screen = new Dictionary<(long X, long Y), Tile>();
-        
-        public ArcadeCabinet(string program)
+
+        public long Score { get; private set; }
+
+        public ArcadeCabinet(string program, bool playForFree = false)
         {
             _processor = new Intcode(program);
+
+            if (playForFree)
+            {
+                _processor.WriteMemory(0, 2);
+            }
         }
 
         public void Play()
@@ -23,19 +30,35 @@ namespace AdventOfCode13
                 _processor.Process();
                 var y = _processor.Output;
                 _processor.Process();
-                Tile newTile = (Tile)_processor.Output;
-                
-                if (!_screen.TryGetValue((x, y), out _))
+
+                if (x == -1 && y == 0)
                 {
-                    _screen.Add((x, y), newTile);
+                    Score = _processor.Output;
                 }
                 else
                 {
-                    _screen[(x, y)] = newTile;
+                    UpdateScreen((x, y), (Tile)_processor.Output);
                 }
             }
         }
 
         public int BlockTilesCount => _screen.Values.Count(t => t == Tile.Block);
+
+        private void UpdateScreen((long X, long) position, Tile tile)
+        {
+            if (!_screen.TryGetValue(position, out _))
+            {
+                _screen.Add(position, Tile.Empty);
+            }
+            
+            _screen[position] = tile;
+
+            if (tile == Tile.Ball)
+            {
+                var paddle = _screen.Where(kvp => kvp.Value == Tile.Paddle).SingleOrDefault();
+
+               _processor.EnqueueInput(position.X < paddle.Key.X ? -1 : position.X > paddle.Key.X ? 1 : 0);
+            }
+        }
     }
 }
