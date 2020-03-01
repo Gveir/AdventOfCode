@@ -57,7 +57,6 @@ namespace AdventOfCode12.Tests
 
         [Theory]
         [InlineData("Example1.txt", 2772)]
-        //[InlineData("Example2.txt", 4686774924)]
         public void ExampleHistoryRepeatItselfTest(string fileName, long expectedSteps)
         {
             var exampleLoader = new AlternateExampleLoader(fileName);

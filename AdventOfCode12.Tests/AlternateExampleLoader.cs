@@ -8,6 +8,9 @@ namespace AdventOfCode12.Tests
 {
     internal class AlternateExampleLoader
     {
+        private List<(int X, int Y, int Z)> _moonsPositions = new List<(int, int, int)>();
+
+        public IEnumerable<(int X, int Y, int Z)> MoonsPositions => _moonsPositions;
         public AlternateSystem System { get; private set; }
         public Dictionary<int, IReadOnlyCollection<int>> ExpectedSystemStateOnStep { get; private set; }
 
@@ -15,15 +18,13 @@ namespace AdventOfCode12.Tests
         {
             var example = File.ReadAllText(fileName).Split(Environment.NewLine);
 
-            var moonsPositions = new List<(int, int, int)>();
-
             for (int i = 0; i < 4; i++)
             {
                 var matches = Regex.Matches(example[i], @"-?\d+").Select(m => int.Parse(m.Value)).ToArray();
-                moonsPositions.Add((matches[0], matches[1], matches[2]));
+                _moonsPositions.Add((matches[0], matches[1], matches[2]));
             }
 
-            System = new AlternateSystem(moonsPositions);
+            System = new AlternateSystem(_moonsPositions);
 
             ExpectedSystemStateOnStep = new Dictionary<int, IReadOnlyCollection<int>>();
 
