@@ -4,7 +4,7 @@ using Xunit;
 
 namespace AdventOfCode13.Tests
 {
-    public class BlockTilesTests
+    public class ArcadeCabinetTests
     {
         [Fact]
         public void CountBlockTilesTest()
