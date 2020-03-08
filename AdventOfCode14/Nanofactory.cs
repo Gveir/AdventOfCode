@@ -18,10 +18,15 @@ namespace AdventOfCode14
             _recipeLines = recipeFile.Split(Environment.NewLine).Select(RecipeLine.Create);
         }
 
-        public int MinimumOreForOneFuel()
+        public long MinimumOreForOneFuel()
         {
-            var products = new Dictionary<Chemical, (int Required, int AmountToProduce, int Leftover)>();
-            products.Add(Chemical.Fuel, (1, 1, 0)); 
+            return MinimumOreForFuel(1);
+        }
+
+        public long MinimumOreForFuel(long requiredFuel)
+        {
+            var products = new Dictionary<Chemical, (long Required, long AmountToProduce, long Leftover)>();
+            products.Add(Chemical.Fuel, (requiredFuel, requiredFuel, 0)); 
             products.Add(Chemical.Ore, (0, 0, 0));
             foreach (var line in _recipeLines.Where(l => !l.IsForOutputChemical(Chemical.Fuel)))
             {
@@ -37,7 +42,7 @@ namespace AdventOfCode14
                 foreach (var line in linesToProcess)
                 {
                     var (outputRequiredSoFar, outputAmountToProduce, outputLeftoverSoFar) = products[line.Output.Chemical];
-                    var numberOfReactionsRequired = (int)Math.Ceiling((double)(outputAmountToProduce - outputLeftoverSoFar) / line.Output.Amount);
+                    var numberOfReactionsRequired = (long)Math.Ceiling((decimal)(outputAmountToProduce - outputLeftoverSoFar) / line.Output.Amount);
                     var producedOutput = numberOfReactionsRequired * line.Output.Amount;
                     products[line.Output.Chemical] = (outputRequiredSoFar, 0, producedOutput - outputAmountToProduce + outputLeftoverSoFar);
 
