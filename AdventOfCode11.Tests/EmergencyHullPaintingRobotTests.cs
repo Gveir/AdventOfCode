@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using TestHelpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -44,30 +44,14 @@ namespace AdventOfCode11.Tests
 
         private void VisualizeRegistrationIdentifier(IReadOnlyDictionary<Position, Color> paintedPanels)
         {
-            var colorMap = new Dictionary<Color, string>
+            var colorMap = new Dictionary<Color, char>
             {
-                { Color.Black, "." },
-                { Color.White, "#" }
+                { Color.Black, '.' },
+                { Color.White, '#' }
             };
 
-            var minX = paintedPanels.Min(panel => panel.Key.X);
-            var maxX = paintedPanels.Max(panel => panel.Key.X);
-            var minY = paintedPanels.Min(panel => panel.Key.Y);
-            var maxY = paintedPanels.Max(panel => panel.Key.Y);
-
-            var lineBuilder = new StringBuilder();
-
-            for (int i = maxY; i >= minY; i--)
-            {
-                for (int j = minX; j <= maxX; j++)
-                {
-                    var panelColor = paintedPanels.TryGetValue((Position)(j, i), out var color) ? color : Color.Black;
-                    lineBuilder.Append(colorMap[panelColor]);
-                }
-
-                _output.WriteLine(lineBuilder.ToString());
-                lineBuilder.Clear();
-            }
+            paintedPanels.ToDictionary(x => (x.Key.X, x.Key.Y), x => x.Value)
+                .Visualize(_output, colorMap, '.');
         }
     }
 }
