@@ -27,11 +27,11 @@ namespace AdventOfCode15
 
         public RepairDroid Move(MovementCommand command)
         {
-            _processor.EnqueueInput((long)command);
+            _processor.EnqueueInput(command);
             _processor.Process();
             StatusCode status = (StatusCode)_processor.Output;
 
-            return new RepairDroid(_processor.Clone(), Position.Calculate(command), (TileType)status, MoveCounter + 1);
+            return new RepairDroid(_processor.Clone(), command.Apply(Position), (TileType)status, MoveCounter + 1);
         }
 
         public RepairDroid Clone() => new RepairDroid(_processor.Clone(), Position, TileType, MoveCounter);

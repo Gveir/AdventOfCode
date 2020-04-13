@@ -5,15 +5,6 @@ namespace AdventOfCode15
 {
     public class MapExplorer
     {
-        private readonly MovementCommand[] _commands = new[] { MovementCommand.North, MovementCommand.South, MovementCommand.West, MovementCommand.East };
-        private readonly IDictionary<MovementCommand, MovementCommand> _opossiteCommands = new Dictionary<MovementCommand, MovementCommand>
-        {
-            { MovementCommand.North, MovementCommand.South },
-            { MovementCommand.South, MovementCommand.North },
-            { MovementCommand.West, MovementCommand.East },
-            { MovementCommand.East, MovementCommand.West }
-        };
-
         private readonly Dictionary<(int X, int Y), TileType> _map = new Dictionary<(int, int), TileType>
         {
             { (0, 0), TileType.Start }
@@ -32,7 +23,7 @@ namespace AdventOfCode15
         public int Explore()
         {
             Queue<(RepairDroid, MovementCommand)> droids = new Queue<(RepairDroid, MovementCommand)>(
-                _commands.Select(c => (new RepairDroid(_program), c)));
+                MovementCommand.All.Select(c => (new RepairDroid(_program), c)));
 
             int movesToOxygen = 0;
 
@@ -51,7 +42,7 @@ namespace AdventOfCode15
 
                 if (droidAfterMove.TileType == TileType.Empty)
                 {
-                    foreach (var c in _commands.Except(new[] { _opossiteCommands[command] }))
+                    foreach (var c in MovementCommand.AllExcept(command.Opposite))
                     {
                         droids.Enqueue((droidAfterMove.Clone(), c));
                     }
