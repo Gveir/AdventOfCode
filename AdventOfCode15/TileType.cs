@@ -6,6 +6,7 @@
         Empty = 1,
         OxygenSystem = 2,
         Start,
-        Unknown
+        Unknown,
+        Oxygen
     }
 }
