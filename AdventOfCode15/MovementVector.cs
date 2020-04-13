@@ -13,14 +13,6 @@ namespace AdventOfCode15
             {MovementCommand.East, position => (position.X + 1, position.Y) }
         };
 
-        public static IReadOnlyDictionary<(int X, int Y), MovementCommand> Directions = new Dictionary<(int, int), MovementCommand>
-        {
-            { (1, 0), MovementCommand.East },
-            { (-1, 0), MovementCommand.West },
-            { (0, 1), MovementCommand.North },
-            { (0, -1), MovementCommand.South },
-        };
-
         public static (int X, int Y) Calculate(this (int X, int Y) position, MovementCommand command) => _vectors[command](position);
     }
 }

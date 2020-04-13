@@ -31,6 +31,14 @@ namespace AdventOfCode02
             _inputs = new Queue<long>(inputs);
         }
 
+        private Intcode(IEnumerable<long> memory, long opPointer, long relativeBase, IEnumerable<long> inputs)
+        {
+            _memory = memory.ToArray();
+            _opPointer = opPointer;
+            _relativeBase = relativeBase;
+            _inputs = new Queue<long>(inputs);
+        }
+
         public long ReadMemory(int offset) => _memory[_opPointer + offset];
 
         public long ReadMemory(IParameter index)
@@ -104,6 +112,11 @@ namespace AdventOfCode02
             var tempMemory = program.Split(',').Select(i => Convert.ToInt64(i)).ToArray();
             _memory = new long[tempMemory.Length * 20]; //arbitrarily chosen memory size to alocate as the requirements are vague 
             Array.Copy(tempMemory, 0, _memory, 0, tempMemory.Length);
+        }
+
+        public Intcode Clone()
+        {
+            return new Intcode(_memory, _opPointer, _relativeBase, _inputs);
         }
     }
 }

@@ -28,14 +28,13 @@ namespace AdventOfCode15.Tests
         {
             var program = File.ReadAllText("Input.txt");
 
-            var droid = new RepairDroid(program);
-            var explorer = new MapExplorer(droid);
+            var explorer = new MapExplorer(program);
 
             var pathLength = explorer.Explore();
 
             explorer.Map.Visualize(_output, visualMap, '?');
 
-            Assert.Equal((-12, 15), droid.Position);
+            Assert.Equal((-12, 16), explorer.OxygenSystemPosition);
             Assert.Equal(280, pathLength);
         }
     }
