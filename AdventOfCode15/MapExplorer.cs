@@ -58,11 +58,12 @@ namespace AdventOfCode15
 
         private MovementCommand FindNextMove((int X, int Y) position)
         {
-            Dictionary<(int X, int Y), (TileType, int MoveCounter)> potentialPositions = MovementVector.Directions
+            Dictionary<(int X, int Y), (TileType TileType, int MoveCounter)> potentialPositions = MovementVector.Directions
                 .ToDictionary(pos => (pos.Key.X + position.X, pos.Key.Y + position.Y),
                     pos => _map.GetValueOrDefault((pos.Key.X + position.X, pos.Key.Y + position.Y), (TileType.Unknown, 0)));
             var nextPosition = potentialPositions
-                .OrderBy(pos => pos.Value.MoveCounter)
+                .OrderByDescending(pos => pos.Value.TileType)
+                .ThenBy(pos => pos.Value.MoveCounter)
                 .ThenBy(pos => pos.Key.X)
                 .ThenBy(pos => pos.Key.Y)
                 .Select(pos => pos.Key)
