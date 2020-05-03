@@ -22,5 +22,21 @@ namespace TestHelpers
                 lineBuilder.Clear();
             }
         }
+
+        public static void Visualize(this IReadOnlyDictionary<(int X, int Y), char> map, ITestOutputHelper output)
+        {
+            var lineBuilder = new StringBuilder();
+
+            for (int i = map.Keys.Min(pos => pos.Y); i <= map.Keys.Max(pos => pos.Y); i++)
+            {
+                for (int j = map.Keys.Min(pos => pos.X); j <= map.Keys.Max(pos => pos.X); j++)
+                {
+                    lineBuilder.Append(map.GetValueOrDefault((j, i), ' '));
+                }
+
+                output.WriteLine(lineBuilder.ToString());
+                lineBuilder.Clear();
+            }
+        }
     }
 }
