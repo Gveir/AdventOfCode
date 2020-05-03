@@ -27,5 +27,17 @@ namespace AdventOfCode17.Tests
 
             Assert.Equal(4044, ascii.AlignmentParametersSum);
         }
+
+        [Fact]
+        public void ExploreScaffoldsTest()
+        {
+            var program = File.ReadAllText("Input.txt");
+
+            var ascii = new ASCII(program, true);
+
+            var dustCollected = ascii.ExploreScaffolds();
+
+            Assert.Equal(893283, dustCollected);
+        }
     }
 }

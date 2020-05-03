@@ -95,6 +95,14 @@ namespace AdventOfCode02
             _inputs.Enqueue(input);
         }
 
+        public void EnqueStringInput(string input)
+        {
+            foreach (var ch in input)
+            {
+                EnqueueInput(ch);
+            }
+        }
+
         public void Process()
         {
             var operationsStream = OperationsFactory.CreateOperationsStream(this);

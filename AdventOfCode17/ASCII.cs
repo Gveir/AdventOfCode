@@ -24,9 +24,19 @@ namespace AdventOfCode17
         public IReadOnlyDictionary<(int X, int Y), char> Map => _map;
         public int AlignmentParametersSum => _alignmentParameters.Sum(kvp => kvp.Value);
 
-        public ASCII(string program)
+        public ASCII(string program) : this(program, false)
+        {
+
+        }
+
+        public ASCII(string program, bool wakeUpVacuumRobot)
         {
             _processor = new Intcode(program);
+
+            if (wakeUpVacuumRobot)
+            {
+                _processor.WriteMemory(0, 2);
+            }
         }
 
         public void ProcessFrame()
@@ -34,6 +44,29 @@ namespace AdventOfCode17
             PrepareMap();
             FindIntersections();
             CalculateAlignmentParameters();
+        }
+
+        public long ExploreScaffolds()
+        {
+            //Main movement routine and movement functions established by "manually"
+            //analyzing the map and figuring out the correct patterns
+            var mainMovementRoutine = "A,B,A,C,A,B,C,B,C,B" + (char)10;
+            var movementFunctionA = "R,8,L,10,L,12,R,4" + (char)10;
+            var movementFunctionB = "R,8,L,12,R,4,R,4" + (char)10;
+            var movementFunctionC = "R,8,L,10,R,8" + (char)10;
+
+            _processor.EnqueStringInput(mainMovementRoutine);
+            _processor.EnqueStringInput(movementFunctionA);
+            _processor.EnqueStringInput(movementFunctionB);
+            _processor.EnqueStringInput(movementFunctionC);
+            _processor.EnqueStringInput("n" + (char)10);
+
+            while (!_processor.IsFinished)
+            {
+                _processor.Process();
+            }
+
+            return _processor.Output;
         }
 
         private void PrepareMap()
