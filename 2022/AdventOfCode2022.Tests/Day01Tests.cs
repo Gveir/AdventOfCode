@@ -23,6 +23,10 @@ namespace AdventOfCode2022.Tests
             var maxCalories = CaloriesCalculator.CalculateMaxCalories(input);
 
             Assert.Equal(24000, maxCalories);
+
+            var top3CumulatedCalories = CaloriesCalculator.CalculateTop3CumulatedCalories(input);
+
+            Assert.Equal(45000, top3CumulatedCalories);
         }
 
         [Fact]
@@ -33,6 +37,10 @@ namespace AdventOfCode2022.Tests
             var maxCalories = CaloriesCalculator.CalculateMaxCalories(input);
 
             Assert.Equal(64929, maxCalories);
+
+            var top3CumulatedCalories = CaloriesCalculator.CalculateTop3CumulatedCalories(input);
+
+            Assert.Equal(193697, top3CumulatedCalories);
         }
     }
 }
