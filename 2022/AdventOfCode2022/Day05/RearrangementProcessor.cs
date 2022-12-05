@@ -7,7 +7,7 @@ namespace AdventOfCode2022.Day05
         private const char EmptyCrate = ' ';
         private const int CrateStringLength = 4; //e.g. "[N] "
         private const int CrateIdOffset = 1;
-        protected static readonly Regex ProcedureStepRegex =
+        private static readonly Regex ProcedureStepRegex =
             new Regex("move ([1-9]\\d?) from ([1-9]) to ([1-9])", RegexOptions.Singleline);
 
         public string Process(string input)
@@ -33,9 +33,11 @@ namespace AdventOfCode2022.Day05
                     {
                         stacks.Add(new Stack<string>());
                     }
-                    if (layer[i + CrateIdOffset] != EmptyCrate)
+
+                    char crate = layer[i + CrateIdOffset];
+                    if (crate != EmptyCrate)
                     {
-                        stacks[i / CrateStringLength].Push(layer[i + CrateIdOffset].ToString());
+                        stacks[i / CrateStringLength].Push(crate.ToString());
                     }
                 }
             }
@@ -49,23 +51,23 @@ namespace AdventOfCode2022.Day05
 
             foreach (var step in steps)
             {
-                ApplyProcedureStep(stacks, step);
+                var match = ProcedureStepRegex.Match(step);
+                var quantity = int.Parse(match.Groups[1].Value);
+                var source = int.Parse(match.Groups[2].Value);
+                var destination = int.Parse(match.Groups[3].Value);
+
+                ApplyRearrangement(stacks, quantity, source, destination);
             }
         }
 
-        protected abstract void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step);
+        protected abstract void ApplyRearrangement(IReadOnlyList<Stack<string>> stacks, int quantity, int source, int destination);
     }
 
     public class CrateMover9000RearrangementProcessor : RearrangementProcessor
     {
-        protected override void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step)
+        protected override void ApplyRearrangement(IReadOnlyList<Stack<string>> stacks, int quantity, int source, int destination)
         {
-            var match = ProcedureStepRegex.Match(step);
-            var quantity = int.Parse(match.Groups[1].Value);
-            var source = int.Parse(match.Groups[2].Value);
-            var destination = int.Parse(match.Groups[3].Value);
-
-            for (int i = 0; i < quantity; i++)
+            while (quantity-- > 0)
             {
                 var crate = stacks[source - 1].Pop();
                 stacks[destination - 1].Push(crate);
@@ -75,13 +77,8 @@ namespace AdventOfCode2022.Day05
 
     public class CrateMover9001RearrangementProcessor : RearrangementProcessor
     {
-        protected override void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step)
+        protected override void ApplyRearrangement(IReadOnlyList<Stack<string>> stacks, int quantity, int source, int destination)
         {
-            var match = ProcedureStepRegex.Match(step);
-            var quantity = int.Parse(match.Groups[1].Value);
-            var source = int.Parse(match.Groups[2].Value);
-            var destination = int.Parse(match.Groups[3].Value);
-
             var cratesToMove = stacks[source - 1].PopRange(quantity);
             stacks[destination - 1].PushRange(cratesToMove.Reverse());
         }
