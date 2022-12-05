@@ -4,48 +4,28 @@ namespace AdventOfCode2022.Tests
 {
     public class Day02Tests
     {
-        [Fact]
-        public void CalculateTotalScoreTestExample()
+        [Theory]
+        [InlineData("Examples/Day02.txt", 15)]
+        [InlineData("Input/Day02.txt", 12458)]
+        public void CalculateTotalScoreTest(string inputPath, int expectedTotalScore)
         {
-            var input = @"A Y
-B X
-C Z";
+            var input = File.ReadAllText(inputPath);
 
             var totalScore = RPSCalculator.CalculateTotalScore(input);
 
-            Assert.Equal(15, totalScore);
+            Assert.Equal(expectedTotalScore, totalScore);
         }
 
-        [Fact]
-        public void CalculateTotalScoreTestInput()
+        [Theory]
+        [InlineData("Examples/Day02.txt", 12)]
+        [InlineData("Input/Day02.txt", 12683)]
+        public void StrategyGuideScoreTes(string inputPath, int expectedTotalScore)
         {
-            var input = File.ReadAllText("Input/Day02.txt");
-
-            var totalScore = RPSCalculator.CalculateTotalScore(input);
-
-            Assert.Equal(12458, totalScore);
-        }
-
-        [Fact]
-        public void StrategyGuideScoreTestExample()
-        {
-            var input = @"A Y
-B X
-C Z";
+            var input = File.ReadAllText(inputPath);
 
             var totalScore = RPSCalculator.CalculateStrategyGuideScore(input);
 
-            Assert.Equal(12, totalScore);
-        }
-
-        [Fact]
-        public void StrategyGuideScoreTestInput()
-        {
-            var input = File.ReadAllText("Input/Day02.txt");
-
-            var totalScore = RPSCalculator.CalculateStrategyGuideScore(input);
-
-            Assert.Equal(12683, totalScore);
+            Assert.Equal(expectedTotalScore, totalScore);
         }
     }
 }

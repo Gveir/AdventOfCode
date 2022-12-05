@@ -4,19 +4,16 @@ namespace AdventOfCode2022.Tests
 {
     public class Day03Tests
     {
-        [Fact]
-        public void PrioritySumTestExample()
+        [Theory]
+        [InlineData("Examples/Day03.txt", 157)]
+        [InlineData("Input/Day03.txt", 7581)]
+        public void PrioritySumTest(string inputPath, int expectedPrioritiesSum)
         {
-            var input = @"vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw";
+            var input = File.ReadAllText(inputPath);
 
             var prioritiesSum = PriorityAccumulator.CalculatePrioritySum(input);
 
-            Assert.Equal(157, prioritiesSum);
+            Assert.Equal(expectedPrioritiesSum, prioritiesSum);
         }
 
         [Theory]
@@ -24,46 +21,23 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
         [InlineData("zz", 26)]
         [InlineData("AA", 27)]
         [InlineData("ZZ", 52)]
-        public void PrioritySumTestSingleItem(string input, int expectedPrioritySum)
+        public void PrioritySumSingleItemTest(string input, int expectedPrioritiesSum)
         {
             var prioritiesSum = PriorityAccumulator.CalculatePrioritySum(input);
 
-            Assert.Equal(expectedPrioritySum, prioritiesSum);
+            Assert.Equal(expectedPrioritiesSum, prioritiesSum);
         }
 
-        [Fact]
-        public void PrioritySumTestInput()
+        [Theory]
+        [InlineData("Examples/Day03.txt", 70)]
+        [InlineData("Input/Day03.txt", 2525)]
+        public void BadgePrioritySumTest(string inputPath, int expectedPrioritiesSum)
         {
-            var input = File.ReadAllText("Input/Day03.txt");
-
-            var prioritiesSum = PriorityAccumulator.CalculatePrioritySum(input);
-
-            Assert.Equal(7581, prioritiesSum);
-        }
-
-        [Fact]
-        public void BadgePrioritySumTestExample()
-        {
-            var input = @"vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw";
+            var input = File.ReadAllText(inputPath);
 
             var prioritiesSum = PriorityAccumulator.CalculateBadgeSum(input);
 
-            Assert.Equal(70, prioritiesSum);
-        }
-
-        [Fact]
-        public void BadgePrioritySumTestInput()
-        {
-            var input = File.ReadAllText("Input/Day03.txt");
-
-            var prioritiesSum = PriorityAccumulator.CalculateBadgeSum(input);
-
-            Assert.Equal(2525, prioritiesSum);
+            Assert.Equal(expectedPrioritiesSum, prioritiesSum);
         }
     }
 }
