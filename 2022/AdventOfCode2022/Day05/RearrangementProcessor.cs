@@ -17,7 +17,7 @@ namespace AdventOfCode2022.Day05
             IReadOnlyList<Stack<string>> stacks = ParseStacks(stacksAndProcedure[0]);
 
             ApplyProcedure(stacks, stacksAndProcedure[1]);
-            return string.Join(string.Empty, stacks.Select(s => s.Pop()));
+            return string.Join(string.Empty, stacks.Select(s => s.Peek()));
         }
 
         private IReadOnlyList<Stack<string>> ParseStacks(string input)
