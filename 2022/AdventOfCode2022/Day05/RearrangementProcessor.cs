@@ -2,15 +2,15 @@
 
 namespace AdventOfCode2022.Day05
 {
-    public class RearrangementProcessor
+    public abstract class RearrangementProcessor
     {
         private const char EmptyCrate = ' ';
         private const int CrateStringLength = 4; //e.g. "[N] "
         private const int CrateIdOffset = 1;
-        private static readonly Regex ProcedureStepRegex =
+        protected static readonly Regex ProcedureStepRegex =
             new Regex("move ([1-9]\\d?) from ([1-9]) to ([1-9])", RegexOptions.Singleline);
 
-        public static object Process(string input)
+        public string Process(string input)
         {
             var stacksAndProcedure =  input.Split(Environment.NewLine + Environment.NewLine);
 
@@ -20,7 +20,7 @@ namespace AdventOfCode2022.Day05
             return string.Join(string.Empty, stacks.Select(s => s.Pop()));
         }
 
-        private static IReadOnlyList<Stack<string>> ParseStacks(string input)
+        private IReadOnlyList<Stack<string>> ParseStacks(string input)
         {
             var stacks = new List<Stack<string>>();
             var layers = input.Split(Environment.NewLine);
@@ -43,7 +43,7 @@ namespace AdventOfCode2022.Day05
             return stacks;
         }
 
-        private static void ApplyProcedure(IReadOnlyList<Stack<string>> stacks, string procedure)
+        private void ApplyProcedure(IReadOnlyList<Stack<string>> stacks, string procedure)
         {
             var steps = procedure.Split(Environment.NewLine);
 
@@ -53,7 +53,12 @@ namespace AdventOfCode2022.Day05
             }
         }
 
-        private static void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step)
+        protected abstract void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step);
+    }
+
+    public class CrateMover9000RearrangementProcessor : RearrangementProcessor
+    {
+        protected override void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step)
         {
             var match = ProcedureStepRegex.Match(step);
             var quantity = int.Parse(match.Groups[1].Value);
@@ -65,6 +70,20 @@ namespace AdventOfCode2022.Day05
                 var crate = stacks[source - 1].Pop();
                 stacks[destination - 1].Push(crate);
             }
+        }
+    }
+
+    public class CrateMover9001RearrangementProcessor : RearrangementProcessor
+    {
+        protected override void ApplyProcedureStep(IReadOnlyList<Stack<string>> stacks, string step)
+        {
+            var match = ProcedureStepRegex.Match(step);
+            var quantity = int.Parse(match.Groups[1].Value);
+            var source = int.Parse(match.Groups[2].Value);
+            var destination = int.Parse(match.Groups[3].Value);
+
+            var cratesToMove = stacks[source - 1].PopRange(quantity);
+            stacks[destination - 1].PushRange(cratesToMove.Reverse());
         }
     }
 }
