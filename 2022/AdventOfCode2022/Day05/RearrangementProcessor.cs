@@ -67,11 +67,8 @@ namespace AdventOfCode2022.Day05
     {
         protected override void ApplyRearrangement(IReadOnlyList<Stack<string>> stacks, int quantity, int source, int destination)
         {
-            while (quantity-- > 0)
-            {
-                var crate = stacks[source - 1].Pop();
-                stacks[destination - 1].Push(crate);
-            }
+            var cratesToMove = stacks[source - 1].PopRange(quantity);
+            stacks[destination - 1].PushRange(cratesToMove);
         }
     }
 
