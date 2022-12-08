@@ -8,6 +8,17 @@
 
             return tree.Where(node => node.IsDirectory && node.Size <= sizeThreshold).Sum(node => node.Size);
         }
+
+        public static object ChooseDirectoryToDelete(string[] input, int diskSize, int requiredUnusedSpace)
+        {
+            var tree = new TreeBuilder().Build(input);
+
+            var usedSpace = tree[0].Size;
+            var unusedSpace = diskSize - usedSpace;
+            var spaceNeededToFree = requiredUnusedSpace - unusedSpace;
+
+            return tree.Where(node => node.Size >= spaceNeededToFree && node.IsDirectory).Min(node => node.Size);
+        }
     }
 
     internal record FilesTreeNode
