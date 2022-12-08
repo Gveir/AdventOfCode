@@ -15,5 +15,17 @@ namespace AdventOfCode2022.Tests
 
             Assert.Equal(expectedVisibleTreesCount, visibleTreesCount);
         }
+
+        [Theory]
+        [InlineData("Examples/Day08.txt", 8)]
+        [InlineData("Input/Day08.txt", 392080)]
+        public void CalculateMaxScenicScoreTest(string inputPath, int expectedVisibleTreesCount)
+        {
+            var input = File.ReadAllLines(inputPath);
+
+            var visibleTreesCount = Quadcopter.CalculateMaxScenicScore(input);
+
+            Assert.Equal(expectedVisibleTreesCount, visibleTreesCount);
+        }
     }
 }
