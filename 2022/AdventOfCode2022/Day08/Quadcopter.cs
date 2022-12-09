@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace AdventOfCode2022.Day08
+﻿namespace AdventOfCode2022.Day08
 {
     public class Quadcopter
     {
