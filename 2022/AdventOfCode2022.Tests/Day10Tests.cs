@@ -16,5 +16,20 @@ namespace AdventOfCode2022.Tests
 
             Assert.Equal(expectedSignalsStrengthsSum, signalsStrengthsSum);
         }
+
+        [Theory]
+        [InlineData("Examples/Day10.txt", "Examples/Day10.part2.expected.txt")]
+        [InlineData("Input/Day10.txt", "Input/Day10.part2.expected.txt")]
+        public void DrawOnCrtTest(string inputPath, string expectedImagePatch)
+        {
+            var inputProgram = File.ReadAllLines(inputPath);
+            var expectedImage = File.ReadAllLines(expectedImagePatch);
+
+            var device = new Device(inputProgram);
+            device.ProduceImageFrame();
+            var producedImage = device.Crt.ImageFrame;
+
+            Assert.Equal(expectedImage, producedImage);
+        }
     }
 }
