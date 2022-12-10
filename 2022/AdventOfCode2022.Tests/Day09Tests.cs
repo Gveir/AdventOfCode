@@ -10,12 +10,12 @@ namespace AdventOfCode2022.Tests
         [InlineData("Examples/Day09.txt", 10, 1)]
         [InlineData("Examples/Day09.2.txt", 10, 36)]
         [InlineData("Input/Day09.txt", 10, 2445)]
-        public void CountTailPositionsTest(string inputPath, int ropeLength, int expectedTailPositionsCount)
+        public void CountPositionsVisitedByTailTest(string inputPath, int ropeLength, int expectedPositionsVisitedByTailCount)
         {
             var input = File.ReadAllLines(inputPath);
 
-            var tailPositionsCount = RopeMovementSimulator.CountTailPositions(input, ropeLength);
-            Assert.Equal(expectedTailPositionsCount, tailPositionsCount);
+            var positionsVisitedByTailCount = RopeMovementSimulator.CountPositionsVisitedByTail(input, ropeLength);
+            Assert.Equal(expectedPositionsVisitedByTailCount, positionsVisitedByTailCount);
         }
     }
 }

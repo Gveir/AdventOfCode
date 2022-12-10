@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace AdventOfCode2022.Day09
+﻿namespace AdventOfCode2022.Day09
 {
     public class RopeMovementSimulator
     {
@@ -12,12 +10,11 @@ namespace AdventOfCode2022.Day09
                 { 'D', (0, -1) }
             };
 
-        public static int CountTailPositions(string[] input, int ropeLength)
+        public static int CountPositionsVisitedByTail(string[] input, int ropeLength)
         {
+            var visitedPositionsPerKnot = SimulateMovements(input, ropeLength);
 
-            var visitedPositions = SimulateMovements(input, ropeLength);
-
-            return visitedPositions.Last().Count;
+            return visitedPositionsPerKnot.Last().Count;
         }
 
         private static IReadOnlyList<IReadOnlyList<Coordinate>> SimulateMovements(string[] movements, int ropeLength)
@@ -50,20 +47,23 @@ namespace AdventOfCode2022.Day09
                 var thisKnot = knotsPositions[knotIndex];
                 if (AreTouching(knotBefore, thisKnot))
                 {
-                    continue;
+                    break;
                 }
 
-                movementVector = (CalculateDelta(knotBefore.Column, thisKnot.Column), CalculateDelta(knotBefore.Row, thisKnot.Row));
+                movementVector = CalculateDeltas(knotBefore, thisKnot);
                 knotsPositions[knotIndex] = new Coordinate(thisKnot.Row + movementVector.Y, thisKnot.Column + movementVector.X);
                 visitedPositionsPerKnot[knotIndex].Add(knotsPositions[knotIndex]);
             }
         }
 
-        private static bool AreTouching(Coordinate headPosition, Coordinate tailPosition)
+        private static bool AreTouching(Coordinate knot1, Coordinate knot2)
         {
-            return headPosition.Row - 1 <= tailPosition.Row && tailPosition.Row <= headPosition.Row + 1 &&
-                headPosition.Column - 1 <= tailPosition.Column && tailPosition.Column <= headPosition.Column + 1;
+            return knot1.Row - 1 <= knot2.Row && knot2.Row <= knot1.Row + 1 &&
+                knot1.Column - 1 <= knot2.Column && knot2.Column <= knot1.Column + 1;
         }
+
+        private static (int X, int Y) CalculateDeltas(Coordinate knot1, Coordinate knot2) =>
+            (CalculateDelta(knot1.Column, knot2.Column), CalculateDelta(knot1.Row, knot2.Row));
 
         private static int CalculateDelta(int A, int B)
         {
