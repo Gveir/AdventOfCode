@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Data;
 
 namespace AdventOfCode2022.Day09
 {
@@ -12,77 +12,63 @@ namespace AdventOfCode2022.Day09
                 { 'D', (0, -1) }
             };
 
-        public static int CountTailPositions(string[] input)
+        public static int CountTailPositions(string[] input, int ropeLength)
         {
-            
-            var (_, tailPositions) = SimulateMovements(input);
 
-            return tailPositions.Count;
+            var visitedPositions = SimulateMovements(input, ropeLength);
+
+            return visitedPositions.Last().Count;
         }
 
-        private static (IReadOnlyList<Coordinate> HeadPositions, IReadOnlyList<Coordinate> TailPositions) SimulateMovements(string[] movements)
+        private static IReadOnlyList<IReadOnlyList<Coordinate>> SimulateMovements(string[] movements, int ropeLength)
         {
-            var headPosition = new Coordinate(0, 0);
-            var tailPosition = new Coordinate(0, 0);
-            var headVisitedPositions = new HashSet<Coordinate> { headPosition };
-            var tailVisitedPositions = new HashSet<Coordinate> { tailPosition };
+            var knotsPositions = Enumerable.Repeat(new Coordinate(0, 0), ropeLength).ToList();
+            var visitedPositions = knotsPositions.Select(k => new HashSet<Coordinate> { k }).ToList();
 
             foreach (var movement in movements.Select(Movement.FromString))
             {
                 var steps = movement.StepsCount;
                 while (steps-- > 0)
                 {
-                    var (newHeadPosition, newTailPosition) = ApplyMovement(movement, headPosition, tailPosition);
-                    headVisitedPositions.Add(headPosition = newHeadPosition);
-                    tailVisitedPositions.Add(tailPosition = newTailPosition);
+                    ApplyMovement(movement.Direction, knotsPositions, visitedPositions);
                 }
             }
 
-            return (headVisitedPositions.ToList(), tailVisitedPositions.ToList());
+            return visitedPositions.Select(k => k.ToList()).ToList();
         }
 
-        private static (Coordinate HeadPosition, Coordinate TailPosition) ApplyMovement(Movement movement, Coordinate headPosition, Coordinate tailPosition)
+        private static void ApplyMovement(char movementDirection, List<Coordinate> knotsPositions, IList<HashSet<Coordinate>> visitedPositions)
         {
-            var movementVector = MovementVectors[movement.Direction];
-            Coordinate newHeadPosition = new Coordinate(headPosition.Row + movementVector.Y, headPosition.Column + movementVector.X);
+            var movementVector = MovementVectors[movementDirection];
 
-            if(AreTouching(newHeadPosition, tailPosition))
-            {
-                return (newHeadPosition, tailPosition);
-            }
+            knotsPositions[0] = new Coordinate(knotsPositions[0].Row + movementVector.Y, knotsPositions[0].Column + movementVector.X);
+            visitedPositions[0].Add(knotsPositions[0]);
 
-            Coordinate newTailPosition;
-
-            if (tailPosition.Row == newHeadPosition.Row || tailPosition.Column == newHeadPosition.Column)
+            for (int knotIndex = 1; knotIndex < knotsPositions.Count; knotIndex++)
             {
-                newTailPosition = new Coordinate(tailPosition.Row + movementVector.Y, tailPosition.Column + movementVector.X);
-            }
-            else
-            {
-                switch (movement.Direction) {
-                    case 'R':
-                    case 'L':
-                        var deltaRow = newHeadPosition.Row - tailPosition.Row;
-                        newTailPosition = new Coordinate(tailPosition.Row + movementVector.Y + deltaRow, tailPosition.Column + movementVector.X);
-                        break;
-                    case 'U':
-                    case 'D':
-                        var deltaColumn = newHeadPosition.Column - tailPosition.Column;
-                        newTailPosition = new Coordinate(tailPosition.Row + movementVector.Y, tailPosition.Column + movementVector.X + deltaColumn);
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Unrecognized movement direction {movement.Direction}");
+                var knotBefore = knotsPositions[knotIndex - 1];
+                var thisKnot = knotsPositions[knotIndex];
+                if (AreTouching(knotBefore, thisKnot))
+                {
+                    continue;
                 }
-                
-            }
 
-            return (newHeadPosition, newTailPosition);
+                movementVector = (CalculateDelta(knotBefore.Column, thisKnot.Column), CalculateDelta(knotBefore.Row, thisKnot.Row));
+                knotsPositions[knotIndex] = new Coordinate(thisKnot.Row + movementVector.Y, thisKnot.Column + movementVector.X);
+                visitedPositions[knotIndex].Add(knotsPositions[knotIndex]);
+            }
         }
 
         private static bool AreTouching(Coordinate headPosition, Coordinate tailPosition)
         {
             return headPosition.Row - 1 <= tailPosition.Row && tailPosition.Row <= headPosition.Row + 1 &&
                 headPosition.Column - 1 <= tailPosition.Column && tailPosition.Column <= headPosition.Column + 1;
+        }
+
+        private static int CalculateDelta(int A, int B)
+        {
+            var delta = A - B;
+            return delta == 0 ? 0 : (delta / Math.Abs(delta));
         }
 
         private record Coordinate (int Row, int Column);
