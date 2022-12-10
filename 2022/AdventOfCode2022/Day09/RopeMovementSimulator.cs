@@ -23,26 +23,26 @@ namespace AdventOfCode2022.Day09
         private static IReadOnlyList<IReadOnlyList<Coordinate>> SimulateMovements(string[] movements, int ropeLength)
         {
             var knotsPositions = Enumerable.Repeat(new Coordinate(0, 0), ropeLength).ToList();
-            var visitedPositions = knotsPositions.Select(k => new HashSet<Coordinate> { k }).ToList();
+            var visitedPositionsPerKnot = knotsPositions.Select(k => new HashSet<Coordinate> { k }).ToList();
 
             foreach (var movement in movements.Select(Movement.FromString))
             {
                 var steps = movement.StepsCount;
                 while (steps-- > 0)
                 {
-                    ApplyMovement(movement.Direction, knotsPositions, visitedPositions);
+                    ApplyMovement(movement.Direction, knotsPositions, visitedPositionsPerKnot);
                 }
             }
 
-            return visitedPositions.Select(k => k.ToList()).ToList();
+            return visitedPositionsPerKnot.Select(k => k.ToList()).ToList();
         }
 
-        private static void ApplyMovement(char movementDirection, List<Coordinate> knotsPositions, IList<HashSet<Coordinate>> visitedPositions)
+        private static void ApplyMovement(char movementDirection, List<Coordinate> knotsPositions, IList<HashSet<Coordinate>> visitedPositionsPerKnot)
         {
             var movementVector = MovementVectors[movementDirection];
 
             knotsPositions[0] = new Coordinate(knotsPositions[0].Row + movementVector.Y, knotsPositions[0].Column + movementVector.X);
-            visitedPositions[0].Add(knotsPositions[0]);
+            visitedPositionsPerKnot[0].Add(knotsPositions[0]);
 
             for (int knotIndex = 1; knotIndex < knotsPositions.Count; knotIndex++)
             {
@@ -55,7 +55,7 @@ namespace AdventOfCode2022.Day09
 
                 movementVector = (CalculateDelta(knotBefore.Column, thisKnot.Column), CalculateDelta(knotBefore.Row, thisKnot.Row));
                 knotsPositions[knotIndex] = new Coordinate(thisKnot.Row + movementVector.Y, thisKnot.Column + movementVector.X);
-                visitedPositions[knotIndex].Add(knotsPositions[knotIndex]);
+                visitedPositionsPerKnot[knotIndex].Add(knotsPositions[knotIndex]);
             }
         }
 
