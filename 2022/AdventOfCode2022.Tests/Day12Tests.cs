@@ -15,5 +15,17 @@ namespace AdventOfCode2022.Tests
 
             Assert.Equal(expectedPathLength, shortestPathLength);
         }
+
+        [Theory]
+        [InlineData("Examples/Day12.txt", 29)]
+        [InlineData("Input/Day12.txt", 386)]
+        public void FindShortestPathLengthFromAnySquareWithElevationATest(string inputPath, int expectedPathLength)
+        {
+            var input = File.ReadAllLines(inputPath);
+
+            var shortestPathLength = PathFinder.FindShortestPathLengthFromAnyGridSquareWithElevation(input, 'a');
+
+            Assert.Equal(expectedPathLength, shortestPathLength);
+        }
     }
 }

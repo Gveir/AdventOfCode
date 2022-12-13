@@ -2,7 +2,21 @@
 {
     public class PathFinder
     {
-        public static int FindShortestPathLength(string[] input) => FindShortestPath(ParseMap(input)).Count;
+        public static int FindShortestPathLength(string[] input)
+        {
+            Map map = ParseMap(input);
+            return FindShortestPath(map, map.GridSquares.Single(gs => gs.Elevation == 'S')).Count;
+        }
+
+        public static int FindShortestPathLengthFromAnyGridSquareWithElevation(string[] input, char startingElevation)
+        {
+            Map map = ParseMap(input);
+
+            var startingPositions = map.GridSquares.Where(gs => gs.NormalizedElevation == startingElevation);
+            var allPaths = startingPositions.Select(gs => FindShortestPath(ParseMap(input), gs));
+
+            return allPaths.Where(x => x.Count > 0).MinBy(path => path.Count)?.Count ?? 0;
+        }
 
         private static Map ParseMap(string[] input)
         {
@@ -19,11 +33,11 @@
             return map;
         }
 
-        private static IReadOnlyList<GridSquare> FindShortestPath(Map map)
+        private static IReadOnlyList<GridSquare> FindShortestPath(Map map, GridSquare startingPosition)
         {
             var queue = new Queue<GridSquare>();
-            map.StartingPosition.Visited = true;
-            queue.Enqueue(map.StartingPosition);
+            startingPosition.Visited = true;
+            queue.Enqueue(startingPosition);
 
             while(queue.Count > 0)
             {
