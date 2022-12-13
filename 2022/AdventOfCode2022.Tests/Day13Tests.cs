@@ -11,7 +11,7 @@ namespace AdventOfCode2022.Tests
         {
             var input = File.ReadAllText(inputPath);
 
-            var sumOfPairsIndicesInRightOrder = PacketsComparer.CalculateSumOfPairsIndicesInRightOrder(input);
+            var sumOfPairsIndicesInRightOrder = new PacketsComparer().CalculateSumOfPairsIndicesInRightOrder(input);
 
             Assert.Equal(expectedSumOfPairsIndicesInRightOrder, sumOfPairsIndicesInRightOrder);
         }

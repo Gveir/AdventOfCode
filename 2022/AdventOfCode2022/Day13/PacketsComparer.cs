@@ -4,12 +4,11 @@ namespace AdventOfCode2022.Day13
 {
     public class PacketsComparer : IComparer<JsonArray>
     {
-        public static int CalculateSumOfPairsIndicesInRightOrder(string input)
-        {
-            var pairs = input.Split(Environment.NewLine + Environment.NewLine);
-            var pairsInRightOrder = pairs.Select(IsPairInRightOrder).ToArray();
-            return pairsInRightOrder.Select((x, index) => x == ComparisonResult.InOrder ? (index + 1) : 0).Sum();
-        }
+        public int CalculateSumOfPairsIndicesInRightOrder(string input) =>
+            input.Split(Environment.NewLine + Environment.NewLine)
+                .Select(ComparePair)
+                .Select((x, index) => x < 0 ? (index + 1) : 0)
+                .Sum();
 
         public int CalculateDecoderKey(string input, string[] dividerPackets)
         {
@@ -23,7 +22,9 @@ namespace AdventOfCode2022.Day13
             return decoderKey;
         }
 
-        private static ComparisonResult IsPairInRightOrder(string inputPair)
+        public int Compare(JsonArray? x, JsonArray? y) => CompareElements(x!, y!);
+
+        private static int ComparePair(string inputPair)
         {
             var packetsInPair = inputPair.Split(Environment.NewLine);
 
@@ -33,7 +34,7 @@ namespace AdventOfCode2022.Day13
             return CompareElements(left, right);
         }
 
-        private static ComparisonResult CompareElements(JsonArray left, JsonArray right)
+        private static int CompareElements(JsonArray left, JsonArray right)
         {
             for (int i = 0; i < Math.Min(left.Count, right.Count); i++)
             {
@@ -46,7 +47,7 @@ namespace AdventOfCode2022.Day13
                     var leftValue = leftElement!.GetValue<short>();
                     var rightValue = rightElement!.GetValue<short>();
                     if (leftValue == rightValue) continue;
-                    return leftValue < rightValue ? ComparisonResult.InOrder : ComparisonResult.NotInOrder;
+                    return leftValue.CompareTo(rightValue);
                 }
 
                 if (leftElement is JsonValue)
@@ -59,32 +60,11 @@ namespace AdventOfCode2022.Day13
                 }
 
                 var comparisonResult = CompareElements(leftElement!.AsArray(), rightElement!.AsArray());
-                if (comparisonResult == ComparisonResult.Equal) continue;
+                if (comparisonResult == 0) continue;
                 return comparisonResult;
             }
 
-            return left.Count == right.Count
-                ? ComparisonResult.Equal
-                : left.Count < right.Count
-                    ? ComparisonResult.InOrder
-                    : ComparisonResult.NotInOrder;
+            return left.Count == right.Count ? 0 : left.Count < right.Count ? -1 : 1;
         }
-
-        public int Compare(JsonArray? x, JsonArray? y)
-        {
-            var comparisonResult = CompareElements(x, y);
-            return comparisonResult == ComparisonResult.Equal
-                ? 0
-                : comparisonResult == ComparisonResult.InOrder
-                    ? -1 : 1;
-
-        }
-    }
-
-    internal enum ComparisonResult
-    {
-        Equal,
-        InOrder,
-        NotInOrder
     }
 }
