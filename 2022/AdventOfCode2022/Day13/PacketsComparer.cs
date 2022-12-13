@@ -2,13 +2,25 @@
 
 namespace AdventOfCode2022.Day13
 {
-    public class PacketsComparer
+    public class PacketsComparer : IComparer<JsonArray>
     {
         public static int CalculateSumOfPairsIndicesInRightOrder(string input)
         {
             var pairs = input.Split(Environment.NewLine + Environment.NewLine);
             var pairsInRightOrder = pairs.Select(IsPairInRightOrder).ToArray();
             return pairsInRightOrder.Select((x, index) => x == ComparisonResult.InOrder ? (index + 1) : 0).Sum();
+        }
+
+        public int CalculateDecoderKey(string input, string[] dividerPackets)
+        {
+            var packets = input.Split(Environment.NewLine).Where(line => !string.IsNullOrEmpty(line)).ToList();
+            packets.AddRange(dividerPackets);
+
+            var sortedPackets = packets.Select(packet => JsonNode.Parse(packet)!.Root.AsArray()).ToList();
+            sortedPackets.Sort(this);
+
+            var decoderKey = dividerPackets.Select(dp => sortedPackets.FindIndex(packet => packet.ToJsonString() == dp) + 1).Aggregate(1, (x, y) => x * y);
+            return decoderKey;
         }
 
         private static ComparisonResult IsPairInRightOrder(string inputPair)
@@ -56,6 +68,16 @@ namespace AdventOfCode2022.Day13
                 : left.Count < right.Count
                     ? ComparisonResult.InOrder
                     : ComparisonResult.NotInOrder;
+        }
+
+        public int Compare(JsonArray? x, JsonArray? y)
+        {
+            var comparisonResult = CompareElements(x, y);
+            return comparisonResult == ComparisonResult.Equal
+                ? 0
+                : comparisonResult == ComparisonResult.InOrder
+                    ? -1 : 1;
+
         }
     }
 
