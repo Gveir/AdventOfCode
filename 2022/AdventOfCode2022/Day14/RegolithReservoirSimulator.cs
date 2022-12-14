@@ -13,63 +13,66 @@
         {
             var simulationResult = SimulateSandPouring(input, infiniteFloor);
 
-            return simulationResult.Count(unit => unit.Kind == UnitKind.Sand);
+            return simulationResult.Count;
         }
 
-        private static IReadOnlyList<Unit> SimulateSandPouring(string input, bool infiniteFloor)
+        private static IReadOnlyList<Position> SimulateSandPouring(string input, bool infiniteFloor)
         {
-            var cave = ParseInitialCaveSetup(input);
+            var rocks = ParseRocksSetup(input);
+            var sandUnits = new HashSet<Position>();
 
             var pouringPoint = new Position(500, 0);
-            var bottom = cave.Where(u => u.Kind == UnitKind.Rock).Max(u => u.Position.Y);
-            var fallingSandUnit = new Unit(pouringPoint, UnitKind.Sand);
-            cave.Add(fallingSandUnit);
+            var bottom = rocks.Max(p => p.Y);
+            var fallingSandUnit = pouringPoint;
 
             while (true)
             {
-                SetNewUnitPosition(fallingSandUnit, cave, infiniteFloor, bottom);
+                var (newPosition, isAtRest) = SetNewUnitPosition(fallingSandUnit, rocks, sandUnits, infiniteFloor, bottom);
+                fallingSandUnit = newPosition;
 
-                if (infiniteFloor && fallingSandUnit.Position == pouringPoint)
+                if (infiniteFloor && fallingSandUnit == pouringPoint)
                 {
                     break;
                 }
-                if (!infiniteFloor && fallingSandUnit.Position.Y >= bottom)
+                if (!infiniteFloor && fallingSandUnit.Y >= bottom)
                 {
-                    cave.Remove(fallingSandUnit);
+                    sandUnits.Remove(fallingSandUnit);
                     break;
                 }
 
-                if (!fallingSandUnit.IsAtRest) continue;
+                if (!isAtRest) continue;
 
-                fallingSandUnit = new Unit(pouringPoint, UnitKind.Sand);
-                cave.Add(fallingSandUnit);
+                sandUnits.Add(fallingSandUnit);
+                fallingSandUnit = pouringPoint;
             }
 
-            return cave.AsReadOnly();
+            return sandUnits.ToList().AsReadOnly();
         }
 
-        private static void SetNewUnitPosition(Unit pouringSandUnit, List<Unit> cave, bool infiniteFloor, int bottom)
+        private static (Position, bool) SetNewUnitPosition(Position pouringSandUnit, HashSet<Position> rocks, HashSet<Position> sandUnits, bool infiniteFloor, int bottom)
         {
-            var fallingPositions = FallingDirections.Select(d => pouringSandUnit.Position + d);
+            var fallingPositions = FallingDirections.Select(d => pouringSandUnit + d);
 
             foreach (var newPosition in fallingPositions)
             {
                 if (infiniteFloor && newPosition.Y == bottom + 2) break;
 
-                if ((cave.FirstOrDefault(unit => unit.Position == newPosition)?.Kind ?? UnitKind.Air) > UnitKind.Air)
+                if(sandUnits.Contains(newPosition) || rocks.Contains(newPosition))
+                {
                     continue;
-
-                pouringSandUnit.Position = newPosition;
-                return;
+                }
+                
+                return (newPosition, false);
             }
 
-            pouringSandUnit.IsAtRest = true;
+            sandUnits.Add(pouringSandUnit);
+            return (pouringSandUnit, true);
         }
 
-        private static List<Unit> ParseInitialCaveSetup(string input)
+        private static HashSet<Position> ParseRocksSetup(string input)
         {
             var rockPaths = input.Split(Environment.NewLine);
-            var initialCave = new List<Unit>();
+            var rocks = new HashSet<Position>();
 
             foreach (var rockPath in rockPaths)
             {
@@ -78,17 +81,17 @@
                     .Select(p => new Position(int.Parse(p[0]), int.Parse(p[1])))
                     .ToList();
 
-                initialCave.Add(new Unit(points[0], UnitKind.Rock));
+                rocks.Add(points[0]);
                 var currentPoint = points[0];
 
                 for (var i = 1; i < points.Count; i++)
                 {
-                    initialCave.AddRange(GetPositionsBetween(currentPoint, points[i]).Select(p => new Unit(p, UnitKind.Rock)));
+                    rocks.AddRange(GetPositionsBetween(currentPoint, points[i]));
                     currentPoint = points[i];
                 }
             }
 
-            return initialCave;
+            return rocks;
         }
 
         private static IEnumerable<Position> GetPositionsBetween(Position from, Position to)
@@ -117,12 +120,6 @@
         }
     }
 
-    internal record Unit(Position Position, UnitKind Kind, bool IsAtRest = false)
-    {
-        public Position Position { get; set; } = Position;
-        public bool IsAtRest { get; set; } = IsAtRest;
-    }
-
     internal record Position(int X, int Y)
     {
         public static Position operator +(Position p, Vector v) =>
@@ -130,11 +127,4 @@
     }
 
     internal record Vector(int X, int Y);
-
-    internal enum UnitKind
-    {
-        Air,
-        Rock,
-        Sand
-    }
 }
