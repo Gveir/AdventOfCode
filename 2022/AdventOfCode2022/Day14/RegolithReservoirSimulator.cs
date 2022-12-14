@@ -9,14 +9,14 @@
             new Vector(1, 1)
         };
 
-        public static int CountUnitsOfSandAtRest(string input)
+        public static int CountUnitsOfSandAtRest(string input, bool infiniteFloor = false)
         {
-            var simulationResult = SimulateSandPouring(input);
+            var simulationResult = SimulateSandPouring(input, infiniteFloor);
 
-            return simulationResult.Count(unit => unit.Kind == UnitKind.Sand) - 1;
+            return simulationResult.Count(unit => unit.Kind == UnitKind.Sand);
         }
 
-        private static IReadOnlyList<Unit> SimulateSandPouring(string input)
+        private static IReadOnlyList<Unit> SimulateSandPouring(string input, bool infiniteFloor)
         {
             var cave = ParseInitialCaveSetup(input);
 
@@ -27,10 +27,15 @@
 
             while (true)
             {
-                SetNewUnitPosition(fallingSandUnit, cave);
+                SetNewUnitPosition(fallingSandUnit, cave, infiniteFloor, bottom);
 
-                if (fallingSandUnit.Position.Y >= bottom)
+                if (infiniteFloor && fallingSandUnit.Position == pouringPoint)
                 {
+                    break;
+                }
+                if (!infiniteFloor && fallingSandUnit.Position.Y >= bottom)
+                {
+                    cave.Remove(fallingSandUnit);
                     break;
                 }
 
@@ -43,12 +48,14 @@
             return cave.AsReadOnly();
         }
 
-        private static void SetNewUnitPosition(Unit pouringSandUnit, List<Unit> cave)
+        private static void SetNewUnitPosition(Unit pouringSandUnit, List<Unit> cave, bool infiniteFloor, int bottom)
         {
             var fallingPositions = FallingDirections.Select(d => pouringSandUnit.Position + d);
 
             foreach (var newPosition in fallingPositions)
             {
+                if (infiniteFloor && newPosition.Y == bottom + 2) break;
+
                 if ((cave.FirstOrDefault(unit => unit.Position == newPosition)?.Kind ?? UnitKind.Air) > UnitKind.Air)
                     continue;
 

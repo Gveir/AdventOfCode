@@ -15,5 +15,17 @@ namespace AdventOfCode2022.Tests
 
             Assert.Equal(expectedCountOfUnitsOfSandAtRest, countOfUnitsOfSandAtRest);
         }
+
+        [Theory]
+        [InlineData("Examples/Day14.txt", 93)]
+        [InlineData("Input/Day14.txt", 29044)]
+        public void SimulateSandFallingWithInfiniteFloorTest(string inputPath, int expectedCountOfUnitsOfSandAtRest)
+        {
+            var input = File.ReadAllText(inputPath);
+
+            var countOfUnitsOfSandAtRest = RegolithReservoirSimulator.CountUnitsOfSandAtRest(input, infiniteFloor: true);
+
+            Assert.Equal(expectedCountOfUnitsOfSandAtRest, countOfUnitsOfSandAtRest);
+        }
     }
 }
